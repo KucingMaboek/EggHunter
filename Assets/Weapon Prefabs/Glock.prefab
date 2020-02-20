@@ -11,9 +11,9 @@ GameObject:
   - component: {fileID: 345044267466656286}
   - component: {fileID: 345044267465886270}
   - component: {fileID: 345044267464886526}
-  - component: {fileID: 4836334298236197041}
+  - component: {fileID: 6792170819503732269}
   m_Layer: 0
-  m_Name: Glock
+  m_Name: GLOCK
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -29,7 +29,8 @@ Transform:
   m_LocalRotation: {x: 0.000000021855694, y: 0, z: -0, w: 1}
   m_LocalPosition: {x: -0, y: 0, z: 0}
   m_LocalScale: {x: 100, y: 100, z: 100}
-  m_Children: []
+  m_Children:
+  - {fileID: 5691500830304171405}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -81,7 +82,7 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
---- !u!114 &4836334298236197041
+--- !u!114 &6792170819503732269
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -90,18 +91,41 @@ MonoBehaviour:
   m_GameObject: {fileID: 345044267466823230}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 44d0c1e357387e2438fbd88b237e63f9, type: 3}
+  m_Script: {fileID: 11500000, guid: 39c8672d930413941b55f02ada00b443, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   projectile: {fileID: 6104229504214527357, guid: f62ba06f3d24a994fbe6bafa342a38e3,
     type: 3}
-  shotPoint: {fileID: 7746327300791186872, guid: 952a766e91c02e74b9dbe79e982d78de,
-    type: 3}
   damage: 5
-  fireRate: 0.5
   currentAmmo: 0
-  stockAmmo: 84
-  ammoCapacity: 12
-  shotPointPosX: 0
-  shotPointPosY: 0.1
-  shotPointPosZ: 0.4
+  stockAmmo: 60
+--- !u!1 &4103288537797105468
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5691500830304171405}
+  m_Layer: 0
+  m_Name: ShotPoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5691500830304171405
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4103288537797105468}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0.00085, z: 0.0039}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 345044267466656286}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}

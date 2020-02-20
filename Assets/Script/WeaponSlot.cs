@@ -6,29 +6,31 @@ public class WeaponSlot : MonoBehaviour
 {
     public GameObject rotationPoint;
     public GameObject noTarget;
-    public Camera fpsCam;
+    public Camera tpsCam;
     public GameObject currentWeapon;
     public GameObject weaponDrop;
     public string currentWeaponName;
     public RaycastHit hit;
+    private Transform rootParent;
 
 
     // Start is called before the first frame update
     void Start()
     {
-        initiateWeapon();
-        if (transform.parent.name == "Player")
+        rootParent = transform.parent;
+        InitiateWeapon();
+        if (rootParent.name == "Player")
         {
-            transform.parent.GetComponent<PlayerControl>().setWeaponSlot(gameObject);
+            rootParent.GetComponent<PlayerControl>().setWeaponSlot(gameObject);
         }
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (fpsCam != null)
+        if (tpsCam != null)
         {
-            Transform raycastStartPoint = fpsCam.transform.Find("RaycastStartPoint").transform;
+            Transform raycastStartPoint = tpsCam.transform.Find("RaycastStartPoint").transform;
             Physics.Raycast(raycastStartPoint.position, raycastStartPoint.transform.forward, out hit);
             Vector3 temp = transform.eulerAngles;
             temp.x = rotationPoint.transform.eulerAngles.x;
@@ -36,7 +38,7 @@ public class WeaponSlot : MonoBehaviour
         }
     }
 
-    private bool targetObjectCheck()
+    private bool TargetObjectCheck()
     {
         try
         {
@@ -50,29 +52,30 @@ public class WeaponSlot : MonoBehaviour
         }
     }
 
-    public void changeWeapon(GameObject newWeapon)
+    public void ChangeWeapon(GameObject newWeapon)
     {
         if (currentWeapon != null)
         {
-            dropWeapon();
+            DropWeapon();
 
             currentWeapon = newWeapon;
             string temp = currentWeapon.transform.name;
             currentWeapon = Instantiate(currentWeapon, transform.position, transform.rotation);
             currentWeapon.transform.parent = gameObject.transform;
             currentWeapon.transform.name = temp;
-            currentWeapon.GetComponent<WeaponControl>().enabled = true;
+            //currentWeapon.GetComponent<WeaponControl>().enabled = true;
+            EnableScript(temp);
             currentWeaponName = currentWeapon.transform.name;
 
             if (transform.parent != null)
             {
-                if (transform.parent.tag == "Player")
+                if (rootParent.tag == "Player")
                 {
-                    transform.parent.GetComponent<PlayerControl>().assignWeapon(currentWeapon);
+                    rootParent.GetComponent<PlayerControl>().assignWeapon(currentWeapon);
                 }
                 else //If enemy.
                 {
-                    transform.parent.GetComponent<Enemy>().assignWeapon(currentWeapon);
+                    rootParent.GetComponent<Enemy>().assignWeapon(currentWeapon);
                 }
             }
         }
@@ -85,21 +88,21 @@ public class WeaponSlot : MonoBehaviour
             currentWeapon.transform.name = temp;
             currentWeaponName = currentWeapon.transform.name;
 
-            if (transform.parent != null)
+            if (rootParent != null)
             {
-                if (transform.parent.tag == "Player")
+                if (rootParent.tag == "Player")
                 {
-                    transform.parent.GetComponent<PlayerControl>().assignWeapon(currentWeapon);
+                    rootParent.GetComponent<PlayerControl>().assignWeapon(currentWeapon);
                 }
                 else //If enemy.
                 {
-                    transform.parent.GetComponent<Enemy>().assignWeapon(currentWeapon);
+                    rootParent.GetComponent<Enemy>().assignWeapon(currentWeapon);
                 }
             }
         }
     }
 
-    public void initiateWeapon()
+    public void InitiateWeapon()
     {
         if (currentWeapon != null)
         {
@@ -109,27 +112,39 @@ public class WeaponSlot : MonoBehaviour
             currentWeapon.transform.name = temp;
             currentWeaponName = currentWeapon.transform.name;
 
-            if (transform.parent != null)
+            if (rootParent != null)
             {
-                if (transform.parent.tag == "Player")
+                if (rootParent.tag == "Player")
                 {
-                    transform.parent.GetComponent<PlayerControl>().assignWeapon(currentWeapon);
+                    rootParent.GetComponent<PlayerControl>().assignWeapon(currentWeapon);
                 }
                 else //If enemy.
                 {
-                    transform.parent.GetComponent<Enemy>().assignWeapon(currentWeapon);
+                    rootParent.GetComponent<Enemy>().assignWeapon(currentWeapon);
                 }
             }
         }
     }
 
-    public void dropWeapon()
+    public void DropWeapon()
     {
         if (currentWeapon != null)
         {
             GameObject weaponDropped = Instantiate(weaponDrop, transform.position, Quaternion.Euler(0, 0, 0));
-            weaponDropped.GetComponent<WeaponDrop>().setWeapon(currentWeapon);
+            weaponDropped.GetComponent<WeaponDrop>().SetWeapon(currentWeapon);
             Destroy(currentWeapon);
+        }
+    }
+
+    private void EnableScript(string objectName)
+    {
+        if (objectName == "AK47")
+        {
+            currentWeapon.GetComponent<WP_AK47>().enabled = true;
+        }
+        else if (objectName == "GLOCK")
+        {
+            currentWeapon.GetComponent<WP_GLOCK>().enabled = true;
         }
     }
 }

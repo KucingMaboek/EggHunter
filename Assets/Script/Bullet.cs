@@ -60,7 +60,7 @@ public class Bullet : MonoBehaviour
         }
         catch (System.Exception e)
         {
-            Debug.Log(e.Message);
+            string exception = e.Message;
             return false;
         }
 

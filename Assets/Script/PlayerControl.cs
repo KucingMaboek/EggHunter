@@ -7,26 +7,39 @@ public class PlayerControl : MonoBehaviour
     private Rigidbody rb;
     [SerializeField] private float speed = 3f;
     [SerializeField] private float jump = 3f;
-    [SerializeField] private float jumpRaycastDistance = 0.5f;
-    public GameObject currentWeapon;
+    private float jumpRaycastDistance = 1.1f;
+    private GameObject currentWeapon;
     private GameObject weaponSlot;
-    public WeaponDrop weaponDrop;
+    private WeaponDrop weaponOnFloor;
+    public GameObject weaponDrop;
+    public HealthBar healthBar;
+    private float maxHealth = 100f;
+    [SerializeField] private float currentHealth;
+    public JoyStick playerController;
 
     // Start is called before the first frame update
     void Start()
     {
         rb = gameObject.GetComponent<Rigidbody>();
         rb.angularDrag = 100f;
-
+        currentHealth = maxHealth;
+        healthBar.setMaxHealth(maxHealth);
     }
 
     // Update is called once per frame
     void Update()
     {
-        Jump();
-        isShoot();
-        isReload();
         isSwitchingWeapon();
+        onDeath();
+        try
+        {
+            currentWeapon.GetComponent<IWeaponControl>().ShowAmmoOnUI();
+        }
+        catch (System.Exception e)
+        {
+            string exception = e.Message;
+            //Debug.Log(e.Message);
+        }
     }
 
     private void FixedUpdate()
@@ -35,22 +48,45 @@ public class PlayerControl : MonoBehaviour
 
     }
 
-    private void Jump()
+    public void dealDamage(float damage)
     {
-        if (Input.GetKeyDown(KeyCode.Space))
+        currentHealth -= damage;
+        healthBar.setHealth(currentHealth);
+    }
+
+    public void onDeath()
+    {
+        if (currentHealth <= 0)
         {
-            if (isGrounded())
-            {
-                rb.AddForce(0, jump, 0, ForceMode.Impulse);
-            }
+            GameObject weaponDropped = Instantiate(weaponDrop, transform.position, transform.rotation);
+            weaponDropped.GetComponent<WeaponDrop>().SetWeapon(currentWeapon);
+            //Destroy(gameObject);
+        }
+    }
+
+    public void Jump()
+    {
+        //if (Input.GetKeyDown(KeyCode.Space))
+        //{
+        //    if (isGrounded())
+        //    {
+        //        rb.AddForce(0, jump, 0, ForceMode.Impulse);
+        //    }
+        //}
+
+        if (isGrounded())
+        {
+            rb.AddForce(0, jump, 0, ForceMode.Impulse);
         }
     }
 
     private void Move()
     {
-        float horizontalAxis = Input.GetAxis("Horizontal");
-        float verticalAxis = Input.GetAxis("Vertical");
+        //float horizontalAxis = Input.GetAxis("Horizontal");
+        //float verticalAxis = Input.GetAxis("Vertical");
 
+        float horizontalAxis = playerController.Horizontal();
+        float verticalAxis = playerController.Vertical();
         Vector3 movement = new Vector3(horizontalAxis, 0, verticalAxis) * speed * Time.deltaTime;
         Vector3 newPosition = rb.position + rb.transform.TransformDirection(movement);
         rb.MovePosition(newPosition);
@@ -62,31 +98,36 @@ public class PlayerControl : MonoBehaviour
         return Physics.Raycast(transform.position, Vector3.down, jumpRaycastDistance);
     }
 
-    private void isShoot()
+    public void isShoot()
     {
-        if (Input.GetMouseButton(0))
-        {
-            Debug.Log("player shoot");
-            currentWeapon.GetComponent<WeaponControl>().Shoot();
-        }
+        //if (Input.GetMouseButton(0))
+        //{
+        //    currentWeapon.GetComponent<WeaponControl>().Shoot();
+        //}
+
+        //currentWeapon.GetComponent<WeaponControl>().Shoot();
+        currentWeapon.GetComponent<IWeaponControl>().TriggerOnHold();
     }
 
-    private void isReload()
+    public void isReload()
     {
-        if (Input.GetKeyUp(KeyCode.R))
-        {
-            currentWeapon.GetComponent<WeaponControl>().Reload();
-        }
+        //if (Input.GetKeyUp(KeyCode.R))
+        //{
+        //    currentWeapon.GetComponent<WeaponControl>().Reload();
+        //}
+
+        //currentWeapon.GetComponent<WeaponControl>().Reload();
+        currentWeapon.GetComponent<IWeaponControl>().Reload();
     }
 
     private void isSwitchingWeapon()
     {
-        if (weaponDrop != null)
+        if (weaponOnFloor != null)
         {
             if (Input.GetKeyUp(KeyCode.G))
             {
-                weaponSlot.GetComponent<WeaponSlot>().changeWeapon(weaponDrop.weaponAttached);
-                weaponDrop.destroyWeaponDrop();
+                weaponSlot.GetComponent<WeaponSlot>().ChangeWeapon(weaponOnFloor.GetWeaponAttached());
+                weaponOnFloor.DestroyWeaponDrop();
             }
         }
     }
@@ -103,11 +144,11 @@ public class PlayerControl : MonoBehaviour
 
     public void setWeaponDrop(WeaponDrop weaponDrop)
     {
-        this.weaponDrop = weaponDrop;
+        this.weaponOnFloor = weaponDrop;
     }
 
     public void clearWeaponDrop()
     {
-        weaponDrop = null;
+        weaponOnFloor = null;
     }
 }

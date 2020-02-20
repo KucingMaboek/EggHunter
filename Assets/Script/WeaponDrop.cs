@@ -5,50 +5,48 @@ using UnityEngine.UI;
 
 public class WeaponDrop : MonoBehaviour
 {
-    public float rotateSpeed;
+    private float rotateSpeed = 40f;
     public GameObject weapon;
-    public GameObject weaponAttached;
+    private GameObject weaponAttached;
     private Text changeWeaponPopUp;
-    Vector3 posOffset = new Vector3();
-    Vector3 tempPos = new Vector3();
+    private Vector3 posOffset = new Vector3();
+    private Vector3 tempPos = new Vector3();
 
-    public float amplitude;
-    public float frequency;
+    private float amplitude = 0.5f;
+    private float frequency = 0.5f;
 
     public string tempName;
     public int tempAmmo;
     // Start is called before the first frame update
     void Start()
     {
-        changeWeaponPopUp = GameObject.Find("ChangeWeaponText").GetComponent<Text>();
-        //changeWeaponPopUp = GetComponent<Text>();
-        changeWeaponPopUp.enabled = false;
+
         posOffset = transform.position;
         weaponAttached = Instantiate(weapon, transform.position, transform.rotation);
         weaponAttached.transform.name = weapon.transform.name;
         weaponAttached.transform.parent = gameObject.transform;
         tempName = weaponAttached.transform.name;
-        tempAmmo = weaponAttached.transform.GetComponent<WeaponControl>().stockAmmo;
+        //tempAmmo = weaponAttached.transform.GetComponent<WeaponControl>().stockAmmo;
+        tempAmmo = weaponAttached.transform.GetComponent<IWeaponControl>().GetStockAmmo();
     }
 
     // Update is called once per frame
     void Update()
     {
-        tempPos = posOffset;
-        tempPos.y += Mathf.Sin(Time.fixedTime * Mathf.PI * frequency) * amplitude;
-        transform.position = tempPos;
-        transform.Rotate(Vector3.up * rotateSpeed * Time.deltaTime);
+        Floating();
     }
 
     private void OnTriggerEnter(Collider other)
     {
         if (other.transform.name == "Player")
         {
+            changeWeaponPopUp = other.transform.Find("MainCanvas").Find("ChangeWeaponText").GetComponent<Text>();
             other.GetComponent<PlayerControl>().setWeaponDrop(gameObject.GetComponent<WeaponDrop>());
             if (tempName == other.transform.Find("WeaponSlot").GetComponent<WeaponSlot>().currentWeaponName)
             {
-                GameObject playerWeapon = GameObject.Find("Player/WeaponSlot/" + tempName);
-                playerWeapon.GetComponent<WeaponControl>().sumAmmo(tempAmmo);
+                GameObject playerWeapon = other.transform.Find("WeaponSlot").GetComponent<WeaponSlot>().currentWeapon;
+                //playerWeapon.GetComponent<WeaponControl>().sumAmmo(tempAmmo);
+                playerWeapon.GetComponent<IWeaponControl>().AddAmmo(tempAmmo);
                 Destroy(gameObject);
             } else
             {
@@ -66,14 +64,27 @@ public class WeaponDrop : MonoBehaviour
         }
     }
 
-    public void setWeapon(GameObject weapon)
+    public void SetWeapon(GameObject weapon)
     {
         this.weapon = weapon;
     }
 
-    public void destroyWeaponDrop()
+    public void DestroyWeaponDrop()
     {
         Destroy(gameObject);
+        changeWeaponPopUp.enabled = false;
     }
 
+    private void Floating()
+    {
+        tempPos = posOffset;
+        tempPos.y += Mathf.Sin(Time.fixedTime * Mathf.PI * frequency) * amplitude;
+        transform.position = tempPos;
+        transform.Rotate(Vector3.up * rotateSpeed * Time.deltaTime);
+    }
+
+    public GameObject GetWeaponAttached()
+    {
+        return weaponAttached;
+    }
 }
