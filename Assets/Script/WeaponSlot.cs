@@ -19,7 +19,7 @@ public class WeaponSlot : MonoBehaviour
     {
         rootParent = transform.parent;
         InitiateWeapon();
-        if (rootParent.name == "Player")
+        if (rootParent.tag == "Player")
         {
             rootParent.GetComponent<PlayerControl>().setWeaponSlot(gameObject);
         }

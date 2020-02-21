@@ -13,6 +13,7 @@ public class FireButton : MonoBehaviour, IPointerDownHandler, IPointerUpHandler,
     private bool continousTrigger;
     private Image containerImg;
     private Image joyStickImg;
+    public bool enableJoystick;
 
     [SerializeField] private float joystickVisualDistance = 100f;
     private Vector3 direction;
@@ -33,11 +34,22 @@ public class FireButton : MonoBehaviour, IPointerDownHandler, IPointerUpHandler,
         {
             player.isShoot();
         }
+        if (enableJoystick)
+        {
+            transform.GetChild(1).gameObject.SetActive(true);
+        }
+        else
+        {
+            transform.GetChild(1).gameObject.SetActive(false);
+        }
     }
 
     public void OnPointerDown(PointerEventData eventData)
     {
-        OnDrag(eventData);
+        if (enableJoystick)
+        {
+            OnDrag(eventData);
+        }
         isFiring = true;
     }
 

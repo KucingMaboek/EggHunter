@@ -21,10 +21,9 @@ ModelImporter:
     2100026: BARREL RING 1
     2100028: BARREL RING 2.001
     2100030: AIM
-    2100032: OUTLINE
     2300000: //RootNode
     3300000: //RootNode
-    4300000: BODY
+    4300000: AK47
     2186277476908879412: ImportLogs
   externalObjects: {}
   materials:
@@ -57,7 +56,7 @@ ModelImporter:
     isReadable: 1
   meshes:
     lODScreenPercentages: []
-    globalScale: 3.5
+    globalScale: 2.5
     meshCompression: 0
     addColliders: 0
     useSRGBMaterialColor: 1

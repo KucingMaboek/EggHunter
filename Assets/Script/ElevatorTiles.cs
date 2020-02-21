@@ -20,7 +20,7 @@ public class ElevatorTiles : MonoBehaviour
     private void OnCollisionEnter(Collision collision)
     {
         directionY = -directionY;
-        if (collision.transform.name == "Player")
+        if (collision.transform.tag == "Player")
         {
             collision.transform.parent = gameObject.transform;
         }
@@ -28,7 +28,7 @@ public class ElevatorTiles : MonoBehaviour
 
     private void OnCollisionExit(Collision collision)
     {
-        if (collision.transform.name == "Player")
+        if (collision.transform.tag == "Player")
         {
             collision.transform.parent = null;
         }

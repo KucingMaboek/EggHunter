@@ -13,6 +13,10 @@ public class WP_AK47 : MonoBehaviour, IWeaponControl
     public int currentAmmo;
     public int stockAmmo = 120;
     private int ammoCapacity = 30;
+    private float reloadTime = 1.1f;
+    private float currentReloadTime = 0f;
+    private bool isReloading;
+    private ReloadButton reloadUI;
     Text ammoUI;
     private Transform rootParent;
 
@@ -23,15 +27,26 @@ public class WP_AK47 : MonoBehaviour, IWeaponControl
 
     public void WeaponCooldown()
     {
-        if (cooldown > 0)
+        if (cooldown > 0 || !isReloading)
         {
             cooldown -= Time.deltaTime;
+        }
+
+        if (currentReloadTime > 0)
+        {
+            currentReloadTime -= Time.deltaTime;
+            reloadUI.CurrentReloadTime(currentReloadTime);
+            isReloading = true;
+        }
+        else
+        {
+            isReloading = false;
         }
     }
 
     public void Fire()
     {
-        if (cooldown <= 0)
+        if (cooldown <= 0 && !isReloading)
         {
             if (currentAmmo > 0)
             {
@@ -39,7 +54,6 @@ public class WP_AK47 : MonoBehaviour, IWeaponControl
                 activeProjectile.transform.GetComponent<Bullet>().setDamage(damage);
                 activeProjectile.transform.GetComponent<Bullet>().setNoTarget(transform.parent.parent.Find("RotatingPoint").Find("NoTarget"));
                 activeProjectile.transform.parent = transform.parent;
-                //activeProjectile.transform.GetComponents<Bullet>()
                 currentAmmo -= 1;
                 cooldown = fireRate;
             }
@@ -49,18 +63,20 @@ public class WP_AK47 : MonoBehaviour, IWeaponControl
     public void Reload()
     {
         int temp;
-        if (stockAmmo > 0)
+        if (stockAmmo > 0 && !isReloading)
         {
             temp = ammoCapacity - currentAmmo;
             if (stockAmmo >= temp)
             {
                 stockAmmo -= temp;
                 currentAmmo += temp;
+                currentReloadTime = reloadTime;
             }
             else
             {
                 currentAmmo += stockAmmo;
                 stockAmmo = 0;
+                currentReloadTime = reloadTime;
             }
         }
         else
@@ -108,11 +124,13 @@ public class WP_AK47 : MonoBehaviour, IWeaponControl
     void Start()
     {
         CheckForRootParent();
-        if (rootParent != null && rootParent.name == "Player")
+        if (rootParent != null && rootParent.tag == "Player")
         {
             ammoUI = rootParent.Find("MainCanvas").Find("AmmunitionUI").GetComponent<Text>();
+            reloadUI = rootParent.Find("MainCanvas").Find("ReloadButton").GetComponent<ReloadButton>();
+            reloadUI.SetReloadValue(reloadTime);
+            Reload();
         }
-        Reload();
         InitializeSP();
     }
 
@@ -121,6 +139,4 @@ public class WP_AK47 : MonoBehaviour, IWeaponControl
     {
         WeaponCooldown();
     }
-
-
 }

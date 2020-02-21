@@ -9,6 +9,7 @@ public class WeaponDrop : MonoBehaviour
     public GameObject weapon;
     private GameObject weaponAttached;
     private Text changeWeaponPopUp;
+    private GameObject actionButton;
     private Vector3 posOffset = new Vector3();
     private Vector3 tempPos = new Vector3();
 
@@ -38,29 +39,34 @@ public class WeaponDrop : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.transform.name == "Player")
+        if (other.transform.tag == "Player")
         {
+            actionButton = other.transform.Find("MainCanvas").Find("ActionButton").gameObject;
             changeWeaponPopUp = other.transform.Find("MainCanvas").Find("ChangeWeaponText").GetComponent<Text>();
+            changeWeaponPopUp.text = weaponAttached.name;
             other.GetComponent<PlayerControl>().setWeaponDrop(gameObject.GetComponent<WeaponDrop>());
             if (tempName == other.transform.Find("WeaponSlot").GetComponent<WeaponSlot>().currentWeaponName)
             {
                 GameObject playerWeapon = other.transform.Find("WeaponSlot").GetComponent<WeaponSlot>().currentWeapon;
-                //playerWeapon.GetComponent<WeaponControl>().sumAmmo(tempAmmo);
+                actionButton.SetActive(false);
                 playerWeapon.GetComponent<IWeaponControl>().AddAmmo(tempAmmo);
                 Destroy(gameObject);
-            } else
+            }
+            else
             {
                 changeWeaponPopUp.enabled = true;
+                actionButton.SetActive(true);
             }
         }
     }
 
     private void OnTriggerExit(Collider other)
     {
-        if (other.transform.name == "Player")
+        if (other.transform.tag == "Player")
         {
             other.GetComponent<PlayerControl>().clearWeaponDrop();
             changeWeaponPopUp.enabled = false;
+            actionButton.SetActive(false);
         }
     }
 

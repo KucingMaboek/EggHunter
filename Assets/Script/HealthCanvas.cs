@@ -4,10 +4,10 @@ using UnityEngine;
 
 public class HealthCanvas : MonoBehaviour
 {
-    public Transform fpsCam;
+    public Transform tpsCam;
 
     private void LateUpdate()
     {
-        transform.LookAt(transform.position+fpsCam.forward);
+        transform.LookAt(transform.position+tpsCam.forward);
     }
 }

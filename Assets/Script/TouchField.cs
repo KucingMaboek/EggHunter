@@ -7,6 +7,7 @@ public class TouchField : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
 {
     private Vector2 touchDist;
     private Vector2 pointerOld;
+    private int pointerId;
     private bool pressed;
 
     // Start is called before the first frame update
@@ -20,10 +21,10 @@ public class TouchField : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
     {
         if (pressed)
         {
-            if (Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Moved)
+            if (pointerId >= 0 && pointerId < Input.touches.Length)
             {
-                touchDist = Input.GetTouch(0).deltaPosition - pointerOld;
-                pointerOld = Input.GetTouch(0).deltaPosition;
+                touchDist = Input.touches[pointerId].position - pointerOld;
+                pointerOld = Input.touches[pointerId].position;
             }
             else
             {
@@ -41,6 +42,7 @@ public class TouchField : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
     public void OnPointerDown(PointerEventData eventData)
     {
         pressed = true;
+        pointerId = eventData.pointerId;
         pointerOld = eventData.position;
     }
 

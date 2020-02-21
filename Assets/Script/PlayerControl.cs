@@ -29,7 +29,7 @@ public class PlayerControl : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        isSwitchingWeapon();
+        //isSwitchingWeapon();
         onDeath();
         try
         {
@@ -120,15 +120,15 @@ public class PlayerControl : MonoBehaviour
         currentWeapon.GetComponent<IWeaponControl>().Reload();
     }
 
-    private void isSwitchingWeapon()
+    public void isSwitchingWeapon()
     {
         if (weaponOnFloor != null)
         {
-            if (Input.GetKeyUp(KeyCode.G))
-            {
-                weaponSlot.GetComponent<WeaponSlot>().ChangeWeapon(weaponOnFloor.GetWeaponAttached());
-                weaponOnFloor.DestroyWeaponDrop();
-            }
+            //if (Input.GetKeyUp(KeyCode.G))
+            //{
+            weaponSlot.GetComponent<WeaponSlot>().ChangeWeapon(weaponOnFloor.GetWeaponAttached());
+            weaponOnFloor.DestroyWeaponDrop();
+            //}
         }
     }
 

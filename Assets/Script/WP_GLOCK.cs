@@ -13,6 +13,10 @@ public class WP_GLOCK : MonoBehaviour, IWeaponControl
     public int currentAmmo;
     public int stockAmmo = 60;
     private int ammoCapacity = 12;
+    private float reloadTime = 0.5f;
+    private float currentReloadTime = 0f;
+    private bool isReloading;
+    private ReloadButton reloadUI;
     Text ammoUI;
     private Transform rootParent;
 
@@ -27,11 +31,21 @@ public class WP_GLOCK : MonoBehaviour, IWeaponControl
         {
             cooldown -= Time.deltaTime;
         }
+        if (currentReloadTime > 0)
+        {
+            currentReloadTime -= Time.deltaTime;
+            reloadUI.CurrentReloadTime(currentReloadTime);
+            isReloading = true;
+        }
+        else
+        {
+            isReloading = false;
+        }
     }
 
     public void Fire()
     {
-        if (cooldown <= 0)
+        if (cooldown <= 0 && !isReloading)
         {
             if (currentAmmo > 0)
             {
@@ -39,7 +53,6 @@ public class WP_GLOCK : MonoBehaviour, IWeaponControl
                 activeProjectile.transform.GetComponent<Bullet>().setDamage(damage);
                 activeProjectile.transform.GetComponent<Bullet>().setNoTarget(transform.parent.parent.Find("RotatingPoint").Find("NoTarget"));
                 activeProjectile.transform.parent = transform.parent;
-                //activeProjectile.transform.GetComponents<Bullet>()
                 currentAmmo -= 1;
                 cooldown = fireRate;
             }
@@ -49,18 +62,20 @@ public class WP_GLOCK : MonoBehaviour, IWeaponControl
     public void Reload()
     {
         int temp;
-        if (stockAmmo > 0)
+        if (stockAmmo > 0 && !isReloading)
         {
             temp = ammoCapacity - currentAmmo;
             if (stockAmmo >= temp)
             {
                 stockAmmo -= temp;
                 currentAmmo += temp;
+                currentReloadTime = reloadTime;
             }
             else
             {
                 currentAmmo += stockAmmo;
                 stockAmmo = 0;
+                currentReloadTime = reloadTime;
             }
         }
         else
@@ -108,11 +123,13 @@ public class WP_GLOCK : MonoBehaviour, IWeaponControl
     void Start()
     {
         CheckForRootParent();
-        if (rootParent != null && rootParent.name == "Player")
+        if (rootParent != null && rootParent.tag == "Player")
         {
             ammoUI = rootParent.Find("MainCanvas").Find("AmmunitionUI").GetComponent<Text>();
+            reloadUI = rootParent.Find("MainCanvas").Find("ReloadButton").GetComponent<ReloadButton>();
+            reloadUI.SetReloadValue(reloadTime);
+            Reload();
         }
-        Reload();
         InitializeSP();
     }
 
