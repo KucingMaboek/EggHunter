@@ -2842,7 +2842,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d7736a6f36f69b9489819f9371f73696, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  joystickVisualDistance: 100
+  joystickVisualDistance: 80
   normalizedDirection: 1
 --- !u!1 &1558206459
 GameObject:
